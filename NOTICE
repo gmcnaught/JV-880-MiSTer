@@ -1,0 +1,21 @@
+Roland JV-880 core for MiSTer
+Copyright (c) 2026 The synthcores contributors
+
+Roland and JV-880 are trademarks of Roland Corporation. This project is
+independent and is not affiliated with, endorsed by or supported by Roland.
+
+The core (releases/*.rbf) is distributed under the GNU General Public
+License version 2 or (at your option) any later version (LICENSE). Its
+complete source is in https://github.com/gmcnaught/synthcores under
+cores/jv880/ and modules/roland/; each release names the commit it was
+built from. The H8/532 MCU, the gate array and the PCM chip are written
+after Nuked-SC55 (nukeykt; jcmoyer's fork, GPL-2.0-or-later). The RBF
+includes the MiSTer framework (Template_MiSTer, GPL-2.0) and the shared
+synthframe modules (MIT).
+
+tools/romset.py reads the ROM table in
+third_party/nuked-sc55/doc/supported_romsets.rst, copied from Nuked-SC55
+(GPL-2.0-or-later, third_party/nuked-sc55/LICENSE).
+
+No Roland ROMs are included. Users make the ROM pack from their own files
+(tools/romset.py).
