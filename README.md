@@ -6,6 +6,10 @@ are the SC-55 core's (`modules/roland`) with the `jv880` model, checked sample f
 against [Nuked-SC55](https://github.com/jcmoyer/Nuked-SC55) (romsets
 `jv880-v1.0.0` and `jv880-v1.0.1`). No ROMs are included.
 
+![Front panel on the MiSTer screen](docs/panel.png)
+
+The MiSTer screen in System mode: the front panel (owner's manual pp. 9-10) with the LCD; the SYSTEM and MIDI MESSAGE LEDs are lit by the firmware. Each button shows its keyboard key.
+
 ## Source
 
 The source, the tests and the design notes are in [gmcnaught/synthcores](https://github.com/gmcnaught/synthcores) under
@@ -19,7 +23,7 @@ The source, the tests and the design notes are in [gmcnaught/synthcores](https:/
 | MCU (memory map, gate array, panel, encoder, NVRAM, timers) | `mcu_lockstep --romset jv880-v1.0.1 --jv880-factory`: from an empty NVRAM through the factory preset | 21,324,800 steps identical; the NVRAM's SHA-256 is d5da7845…d207, the reference's documented factory preset |
 | PCM (wave ROM banks, 25/29 clock, filter) | `system_lockstep --smf jv880.mid` from the factory NVRAM | SHA-256 73feda3c…bbbc, the reference's integration-test hash |
 | Board (pack, DDR3, pacing, MIDI, LCD) | `sim/jv880_board_bench --smf jv880.mid` from power-on, wave ROM through a DDR3 model | 42,181,775 steps and 1,640,121 samples identical to the reference; SHA-256 73feda3c…bbbc; 18.1 clocks a step of 30 |
-| Quartus (Windows build host) | `winbuild.sh jv880`, seed 4 | 28,980 ALMs (69 %); timing met (core setup slack +0.948 ns) |
+| Quartus (release build) | `build-rbf.yml`, Quartus Lite 17.0, seed 5 | 28,852 ALMs (69 %), 526 RAM blocks (95 %); timing met (worst setup slack +0.537 ns, core clock) |
 | MIDI out | `mcu_lockstep --nvram factory --midi-at` with the system-area RQ1; `jv880_board_bench` decoding `uart_txd`; the MiSTer smoke | a 75-byte DT1, identical to the model's in byte and cycle, on `uart_txd`, and on the MiSTer's `/dev/ttyS1`; the panel returns to the play screen and takes keys |
 | MiSTer | `scripts/mister/smoke.sh` with the factory-preset pack | boots to "I-01:Syn Lead"; 60 s of `jv880.mid` over MidiLink and the autosave on OSD open with no underrun or lag; panel keys and the encoder respond as the reference's |
 
@@ -56,7 +60,7 @@ The plan and the reference's differences from the SC-55 are in [`docs/plan.md`](
       FIXES): without it the firmware stayed in its sending state and the panel took no keys
       until the core was reloaded
       ([`MIDI-OUT-PLAN.md`](https://github.com/gmcnaught/synthcores/blob/main/MIDI-OUT-PLAN.md)).
-    - OSD **Diagnostics** shows a hex line under the status strip: MIDI bytes received, the
+    - OSD **Diagnostics** shows a hex line above the status strip: MIDI bytes received, the
       last 4 bytes, the PCM's peak, the output's peak, and the underrun count.
 4. **Output gain (OSD):** at 0 dB the PCM chip's 20-bit full scale is the 16-bit output's full
    scale, so the 16-bit conversion never clamps. +6 dB is the reference renderer's level (`>> 15`), which
@@ -78,9 +82,13 @@ Panel keys (PS/2 or USB keyboard, the reference frontend's map):
 | D | MONITOR |
 | F | COMPARE |
 | G | ENTER |
-| Tab | DATA |
+| Tab | DATA (pushing the DATA dial: hold it while turning for large steps) |
 | ← → | CURSOR |
 | , . or ↓ ↑ | the VALUE encoder |
+
+The screen shows the front panel around the LCD: buttons show pressed while their keys are held,
+and the indicators (PATCH, EDIT, SYSTEM, RHYTHM, UTILITY, TONE SWITCH 1-4, MIDI MESSAGE) light as
+the firmware drives them.
 
 As on the unit, pressing a mode button (UTILITY, SYSTEM, RHYTHM, EDIT) again returns to play
 mode; PATCH/PERFORM switches between patch and performance play.
